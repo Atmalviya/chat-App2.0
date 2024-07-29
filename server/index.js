@@ -12,7 +12,9 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use("/uploads/profiles", express.static("uploads/profiles"));
+
+app.use(express.json()); 
 app.use(cookieParser());
 app.use("/auth", authRoutes);
 

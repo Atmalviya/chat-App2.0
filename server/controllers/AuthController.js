@@ -1,6 +1,8 @@
 const User = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { renameSync, unlinkSync } = require("fs");
+const path = require("path");
 
 const createToken = (email, userId) => {
   return jwt.sign({ email, userId }, process.env.JWT_SECRET, {
@@ -104,7 +106,7 @@ const updateProfile = async (req, res, next) => {
     const userId = req.userId;
     const { firstName, lastName, color } = req.body;
 
-    if (!firstName || !lastName ) {
+    if (!firstName || !lastName) {
       return res.status(400).json({ message: "All fields are required" });
     }
     const user = await User.findByIdAndUpdate(
@@ -132,4 +134,60 @@ const updateProfile = async (req, res, next) => {
   } catch (error) {}
 };
 
-module.exports = { signUp, login, getUserInfo, updateProfile };
+const updateProfileImage = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+    const date = new Date();
+    const timestamp = date.getTime();
+    const fileExtension = path.extname(req.file.originalname);
+    const newFileName = `uploads/profiles/${timestamp}${fileExtension}`;
+    renameSync(req.file.path, newFileName);
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      {
+        image: newFileName,
+      },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json({
+      image: updatedUser.image,
+      message: "Profile image updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error, message: "Internal server error" });
+  }
+};
+
+const removeProfileImage = async (req, res, next) => {
+  const userId = req.userId;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (user.image) {
+      unlinkSync(user.image);
+    }
+    user.image = null;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Profile image removed successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ error, message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  signUp,
+  login,
+  getUserInfo,
+  updateProfile,
+  updateProfileImage,
+  removeProfileImage,
+};
