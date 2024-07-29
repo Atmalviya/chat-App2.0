@@ -4,16 +4,82 @@ import Background from "@/assets/login2.png";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
+import { apiClient } from "@/lib/apiClient";
+import { SIGNUP_ROUTE } from "@/utils/constant";
+import { Login, Signup } from "@/utils/axios";
+import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/store";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
+  const {setUserInfo} = useAppStore();
 
-  const handleLogin = () => {};
+  const validateSignup = () => {
+    if (!email.length) {
+      toast.error("Email is required");
+      return false;
+    }
+    if (!password.length) {
+      toast.error("Password is required");
+      return false;
+    }
+    if (confirmPassword !== password) {
+      toast.error("Passwords do not match");
+      return false;
+    }
+    return true;
+  };
 
-  const handleSignup = () => {};
-  
+  const validateLogin = () => {
+    if (!email.length) {
+      toast.error("Email is required");
+      return false;
+    }
+    if (!password.length) {
+      toast.error("Password is required");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSignup = async () => {
+    if (validateSignup()) {
+      try {
+        const res = await Signup({ email, password });
+        console.log(res)
+        if (res.status === 201) {
+        setUserInfo(res.data.user);
+          navigate("/profile");
+        }
+      } catch (error) {
+        // toast.error("eeeeeeeeeeeeeeeeeeeeeeee");
+      }
+    }
+  };
+
+
+  const handleLogin = async () => {
+    if (validateLogin()) {
+      const res = await Login({ email, password });
+      console.log(res);
+      if (res.data.user._id) {
+        setUserInfo(res.data.user);
+        if(res.data.user.profileSetup){
+          console.log("res.data.user._id")
+          setUserInfo(res.data.user);
+          navigate("/chat");
+        }
+        navigate("/profile");
+      }
+    }
+  };
+
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
       <div className="bg-white border-2 border-white text-opacity-90 shadow-2xl w-full max-w-screen-xl rounded-3xl grid grid-cols-1 xl:grid-cols-2">
@@ -21,14 +87,18 @@ const Auth = () => {
           <div className="flex items-center justify-center flex-col">
             <div className="flex items-center justify-center">
               <h1 className="text-5xl font-bold lg:text-6xl">Welcome</h1>
-              <img src={Victory} alt="Welcome image" className="h-[100px] ml-2" />
+              <img
+                src={Victory}
+                alt="Welcome image"
+                className="h-[100px] ml-2"
+              />
             </div>
             <p className="font-medium text-center mt-4">
               Fill in the details to get started
             </p>
           </div>
           <div className="flex items-center justify-center w-full">
-            <Tabs className="w-full max-w-md">
+            <Tabs className="w-full max-w-md" defaultValue="login">
               <TabsList className="bg-transparent rounded-none w-full flex justify-around">
                 <TabsTrigger
                   value="login"
@@ -58,7 +128,9 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="rounded-full p-6"
                 />
-                <Button className="rounded-full p-6" onClick={handleLogin}>Login</Button>
+                <Button className="rounded-full p-6" onClick={handleLogin}>
+                  Login
+                </Button>
               </TabsContent>
               <TabsContent className="flex flex-col gap-5 mt-10" value="signup">
                 <Input
@@ -82,7 +154,9 @@ const Auth = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="rounded-full p-6"
                 />
-                <Button className="rounded-full p-6" onClick={handleSignup}>Signup</Button>
+                <Button className="rounded-full p-6" onClick={handleSignup}>
+                  Signup
+                </Button>
               </TabsContent>
             </Tabs>
           </div>
