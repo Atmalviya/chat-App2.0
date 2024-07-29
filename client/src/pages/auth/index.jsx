@@ -6,8 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-import { apiClient } from "@/lib/apiClient";
-import { SIGNUP_ROUTE } from "@/utils/constant";
 import { Login, Signup } from "@/utils/axios";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "@/store";
@@ -36,8 +34,13 @@ const Auth = () => {
   };
 
   const validateLogin = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.length) {
       toast.error("Email is required");
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter email");
       return false;
     }
     if (!password.length) {
@@ -70,7 +73,6 @@ const Auth = () => {
       if (res.data.user._id) {
         setUserInfo(res.data.user);
         if(res.data.user.profileSetup){
-          console.log("res.data.user._id")
           setUserInfo(res.data.user);
           navigate("/chat");
         }

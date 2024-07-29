@@ -47,3 +47,21 @@ export const updateProfile = async (data) => {
     return Promise.reject(error.response.data);
   }
 }
+
+export const updateProfileImage = async (formData) => {
+  try {
+    const res = await axios.post("/auth/update-profile-image", formData);
+    return res;
+  } catch (error) {
+    return Promise.reject(error.response.data);
+  }
+}
+
+export const removeProfileImage = async () => {
+  try {
+    const res = await axios.post("/auth/remove-profile-image");
+    return res;
+  } catch (error) {
+    return Promise.reject(error.response.data);
+  }
+}
