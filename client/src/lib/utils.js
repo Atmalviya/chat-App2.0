@@ -1,5 +1,6 @@
 import { clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import animationData from "../assets/lottie-json.json"
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs))
@@ -12,9 +13,19 @@ export const colors = [
   "bg-[#4cc9f02a] text-[#4cc9f0] border-[1px] border-[#4cc9f0bb]",
 ];
 
-  export const getColor= (color) => {
-  if (color >= 0 && color < colors.length) {
-  return colors[color];
+export const getColor = (color) => {
+  if (typeof color === 'number' && color >= 0 && color < colors.length) {
+    return colors[color];
+  } else if (Array.isArray(color) && color.length > 0) {
+    return color[0];
   }
-  return color[0]; 
-  };
+  return undefined; 
+};
+
+
+  export const annimationDefaultOption = {
+    loop: true,
+    autoplay: true,
+    animationData,
+    
+  }

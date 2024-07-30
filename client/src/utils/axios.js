@@ -65,3 +65,22 @@ export const removeProfileImage = async () => {
     return Promise.reject(error.response.data);
   }
 }
+
+export const logout = async () => {
+  try {
+    const res = await axios.get("/auth/logout");
+    return res;
+  } catch (error) {
+    return Promise.reject(error.response.data);
+  }
+}
+
+export const getAllContacts = async (searchTerm) => {
+  try {
+    const res = await apiClient.post("/contacts/search", {searchTerm}, {
+      withCredentials: true,});
+    return res;
+  } catch (error) {
+    return Promise.reject(error.response.data);
+  }
+}
