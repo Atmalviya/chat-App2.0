@@ -2,9 +2,12 @@ import { useAppStore } from "@/store";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import ContactsContainer from "./components/ContactsContainer/ContactsContainer";
+import ChatContainer from "./components/chatContainer/ChatContainer";
+import EmptyChatContainer from "./components/EmptyChatContainer/EmptyChatContainer";
 
 const Chat = () => {
-  const {userInfo} = useAppStore();
+  const {userInfo, selectedChatType} = useAppStore();
   const navigate = useNavigate();
   useEffect(() => {
     if (!userInfo.profileSetup) {
@@ -13,8 +16,13 @@ const Chat = () => {
     }
   }, [userInfo, navigate]);
   return (
-    <div>
-      Email : {userInfo.email}
+    <div className="flex h-[100vh] text-white overflow-hidden">
+      <ContactsContainer />
+      {
+        selectedChatType === undefined ? <EmptyChatContainer /> : <ChatContainer />
+      }
+
+      
     </div>
   )
 }

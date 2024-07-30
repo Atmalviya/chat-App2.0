@@ -122,9 +122,9 @@ const Profile = () => {
                     selectedColor
                   )}`}
                 >
-                  {firstName
+                  {firstName !== ""
                     ? firstName.split("").shift()
-                    : userInfo.email.split("").shift()}
+                    : userInfo?.email.split("").shift()}
                 </div>
               )}
             </Avatar>

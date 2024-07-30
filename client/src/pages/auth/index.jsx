@@ -15,7 +15,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-  const {setUserInfo} = useAppStore();
+  const {userInfo, setUserInfo} = useAppStore();
 
   const validateSignup = () => {
     if (!email.length) {
@@ -69,7 +69,6 @@ const Auth = () => {
   const handleLogin = async () => {
     if (validateLogin()) {
       const res = await Login({ email, password });
-      console.log(res);
       if (res.data.user._id) {
         setUserInfo(res.data.user);
         if(res.data.user.profileSetup){
