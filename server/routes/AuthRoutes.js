@@ -5,7 +5,8 @@ const {
   getUserInfo,
   updateProfile,
   updateProfileImage,
-  removeProfileImage
+  removeProfileImage,
+  Logout
 } = require("../controllers/AuthController.js");
 const { verifyToken } = require("../middlewares/AuthMiddleware");
 const multer = require("multer");
@@ -18,6 +19,7 @@ authRoutes.get("/user-info", verifyToken, getUserInfo);
 authRoutes.post("/update-profile", verifyToken, updateProfile);
 authRoutes.post("/update-profile-image", verifyToken, upload.single("profileImage"), updateProfileImage);
 authRoutes.post("/remove-profile-image", verifyToken,  removeProfileImage);
+authRoutes.get("/logout",  Logout);
 
 
 module.exports = authRoutes;

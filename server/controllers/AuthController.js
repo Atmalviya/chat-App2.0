@@ -23,8 +23,9 @@ const signUp = async (req, res, next) => {
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({ email, password });
+    const user = await User.create({ email, password: hashedPassword });
     res.cookie("token", createToken(email, user._id), {
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
@@ -183,6 +184,15 @@ const removeProfileImage = async (req, res, next) => {
   }
 };
 
+const Logout = async (req, res, next) => {
+  try {
+    res.cookie("token", "", {maxAge: 1, expires: new Date(0), secure: true, sameSite: "None"});
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    
+  }
+}
+
 module.exports = {
   signUp,
   login,
@@ -190,4 +200,5 @@ module.exports = {
   updateProfile,
   updateProfileImage,
   removeProfileImage,
+  Logout
 };
