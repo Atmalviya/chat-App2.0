@@ -4,31 +4,44 @@ import { useEffect, useRef, useState } from "react";
 import { RiEmojiStickerLine } from "react-icons/ri";
 import { IoSend } from "react-icons/io5";
 import EmojiPicker from "emoji-picker-react";
+import { useAppStore } from "@/store";
+import { useSocket } from "@/context/SocketContext";
 
 const MessageBar = () => {
   const emojiRef = useRef();
   const [message, setMessage] = useState("");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+  const { selectedChatType, selectedChatData, userInfo } = useAppStore();
+  const Socket = useSocket();
 
   useEffect(() => {
     function clickedOutside(event) {
-        if (emojiRef.current &&!emojiRef.current.contains(event.target)) {
-          setEmojiPickerOpen(false);
-        }
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setEmojiPickerOpen(false);
+      }
     }
     document.addEventListener("mousedown", clickedOutside);
 
     return () => {
-        document.removeEventListener("mousedown", clickedOutside);
-    }
-  }, [emojiRef])
+      document.removeEventListener("mousedown", clickedOutside);
+    };
+  }, [emojiRef]);
 
   const handleAddEmoji = (emoji) => {
     setMessage((msg) => msg + emoji.emoji);
   };
 
-  const handleSendMessage = async () => {};
-
+  const handleSendMessage = async () => {
+    if(selectedChatType === "contact"){
+      Socket.emit("sendMessage", {
+        sender: userInfo._id,
+        recipient: selectedChatData._id,
+        content:message,
+        messageType: "text",
+        fileUrl: null,
+      })
+    }
+  };
 
   return (
     <div className="h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-5 gap-6">
@@ -37,7 +50,7 @@ const MessageBar = () => {
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none"
           type="text"
           placeholder="Type a message"
-          value={message}
+          value={message} 
           onChange={(e) => setMessage(e.target.value)}
         />
         <button className="text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all">
