@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const authRoutes = require("./routes/AuthRoutes.js");
 const contactsRoutes = require("./routes/ContactRoutes.js");
-// const setupSocket = require("./socket.js");
+const {setupSocket} = require("./socket.js");
 const app = express();
 app.use(
   cors({
@@ -30,4 +30,4 @@ const server = app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
 
-// setupSocket(server);
+setupSocket(server);   
