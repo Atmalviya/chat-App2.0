@@ -84,3 +84,20 @@ export const getAllContacts = async (searchTerm) => {
     return Promise.reject(error.response.data);
   }
 }
+export const getDmMessage = async (receipantId) => {
+try {
+  const res = await axios.post("/messages/get-messages", {id:receipantId})
+  return res
+} catch (error) {
+  return Promise.reject(error.response.data);
+}
+}
+
+export const getContactsForDmList = async () => {
+  try {
+    const res = await axios.get("/contacts/get-contacts-for-dm");
+    return res
+  } catch (error) {
+    return Promise.reject(error.response.data);
+  }
+}
