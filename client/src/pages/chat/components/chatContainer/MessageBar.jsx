@@ -6,12 +6,15 @@ import { IoSend } from "react-icons/io5";
 import EmojiPicker from "emoji-picker-react";
 import { useAppStore } from "@/store";
 import { useSocket } from "@/context/SocketContext";
+import { HOST } from "@/utils/constant";
+import { apiClient } from "@/lib/apiClient";
 
 const MessageBar = () => {
   const emojiRef = useRef();
+  const fileInputRef = useRef();
   const [message, setMessage] = useState("");
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
-  const { selectedChatType, selectedChatData, userInfo } = useAppStore();
+  const { selectedChatType, selectedChatData, userInfo, setIsUploading, setIsDownloding, setFileUploadingProgess  } = useAppStore();
   const Socket = useSocket();
 
   useEffect(() => {
@@ -32,17 +35,53 @@ const MessageBar = () => {
   };
 
   const handleSendMessage = async () => {
-    if(selectedChatType === "contact"){
+    if (selectedChatType === "contact") {
       Socket.emit("sendMessage", {
         sender: userInfo._id,
         recipient: selectedChatData._id,
-        content:message,
+        content: message,
         messageType: "text",
         fileUrl: null,
-      })
+      });
     }
   };
 
+  const handleAddAttchement = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  const handleChangeAddAttchement = async (e) => {
+    try {
+      const file = e.target.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        setIsUploading(true);
+        const res = await apiClient.post("/messages/uploadFile", formData, {
+          onUploadProgress:data=> {
+            setFileUploadingProgess(Math.round((100 * data.loaded) / data.total));
+          }
+        });
+       
+        if (res.status === 200 && res.data) {
+          setIsUploading(false);
+          if (selectedChatType === "contact") {
+            Socket.emit("sendMessage", {
+              sender: userInfo._id,
+              recipient: selectedChatData._id,
+              content: undefined,
+              messageType: "file",
+              fileUrl: res.data.filePath,
+            });
+          }
+        }
+      }
+    } catch (error) {
+      setIsUploading(false);
+      console.error(error);
+    }
+  };
   return (
     <div className="h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-5 gap-6">
       <div className="flex-1 flex bg-[#2a2b33] rounded-md items-center gap-5 pr-5">
@@ -50,12 +89,18 @@ const MessageBar = () => {
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none"
           type="text"
           placeholder="Type a message"
-          value={message} 
+          value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
         <button className="text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all">
-          <GrAttachment />
+          <GrAttachment className="text-2xl" onClick={handleAddAttchement} />
         </button>
+        <input
+          type="file"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleChangeAddAttchement}
+        />
         <div className="relative">
           <button
             onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}
