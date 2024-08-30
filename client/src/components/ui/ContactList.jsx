@@ -27,6 +27,8 @@ const ContactList = ({ contacts, isChannel = false }) => {
           key={contact._id}
           className={`px-10 py-2 transition-all duration-300  cursor-pointer ${
             selectedChatData && selectedChatData._id === contact._id
+
+
               ? "bg-[#8417ff] hover:bg-[#8b41df]"
               : "hover:bg-[#f1f1f111]"
           } `}
@@ -43,7 +45,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                   />
                 ) : (
                   <div
-                    className={`uppercase h-10 w-10 md:w-48 md:h-48 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(
+                    className={`uppercase h-10 w-10 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(
                       contact.color
                     )}`}
                   >
@@ -58,7 +60,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
               isChannel && <div className="bg-[#fffffff22] h-10 w-10 flex items-center justify-center rounded-full">#</div>
             }
             {
-              isChannel ? <span>{contact.name}</span> : <span>{`${contact.firstName} ${contact.lastName}`}</span>
+              isChannel ? <span>{contact.name}</span> : (<span>{ contact.firstName ? `${contact.firstName} ${contact.lastName}` : contact.email}</span>)
             }
           </div>
         </div>

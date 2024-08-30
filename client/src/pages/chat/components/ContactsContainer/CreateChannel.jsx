@@ -75,7 +75,7 @@ const CreateChannel = () => {
       <Dialog open={newChannelModal} onOpenChange={setNewChannelModal}>
         <DialogContent className="bg-[#181920] border-none text-white w-[400px] h-[400px] flex flex-col">
           <DialogHeader>
-            <DialogTitle>Please select details for new channel</DialogTitle>
+            <DialogTitle>Please select members for new channel</DialogTitle>
             <DialogDescription>Please select a contact</DialogDescription>
           </DialogHeader>
           <div className="">

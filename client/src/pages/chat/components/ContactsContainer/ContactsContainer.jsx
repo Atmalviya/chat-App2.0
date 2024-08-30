@@ -23,7 +23,6 @@ useEffect(() => {
         if(res.data.channels){
             setChannels(res.data.channels)
         }
-        console.log(res.data.channels)
     }
     contacts()
     channels()
