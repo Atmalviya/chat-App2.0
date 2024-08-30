@@ -1,5 +1,6 @@
 const User = require("../models/UserModel");
 const Channel = require("../models/ChannelModel");
+const Message = require("../models/MessagesModel"); 
 const mongoose = require("mongoose");
 
 const createChannel = async (req, res) => {
@@ -44,4 +45,37 @@ const getUsersChannels = async (req, res) => {
   }
 };
 
-module.exports = { createChannel, getUsersChannels };
+const getChannelMessages = async (req, res) => {
+  try {
+    const { channelId } = req.params;
+    
+    if (!channelId) {
+      return res.status(400).json({ success: false, message: "Channel ID is required" });
+    }
+
+    const channel = await Channel.findById(channelId).populate({
+      path: "messages",
+      model: Message, 
+      populate: { 
+        path: "sender", 
+        model: User, 
+        select: "firstName lastName email _id image color" 
+      }
+    });
+
+    console.log(channel); 
+
+    if (!channel) {
+      return res.status(404).json({ success: false, message: "Channel not found" });
+    }
+
+    const messages = channel.messages; 
+
+    return res.status(200).json({ success: true, messages });
+  } catch (error) {
+    console.error("Error in getChannelMessages:", error); 
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports = { createChannel, getUsersChannels, getChannelMessages };
