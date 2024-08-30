@@ -5,6 +5,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/AuthRoutes.js");
 const contactsRoutes = require("./routes/ContactRoutes.js");
 const messageRoutes = require("./routes/MessagesRoute.js");
+const channelRoutes = require("./routes/ChannelRoutes.js");
 const {setupSocket} = require("./socket.js");
 const app = express();
 app.use(
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use("/auth", authRoutes);
 app.use("/contacts", contactsRoutes);
 app.use("/messages", messageRoutes);
+app.use('/channel', channelRoutes)
 
 
 //* DB Connection

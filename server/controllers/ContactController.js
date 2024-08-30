@@ -1,6 +1,6 @@
 const User = require("../models/UserModel");
 const Message = require("../models/MessagesModel");
-const { default: mongoose } = require("mongoose");
+const mongoose  = require("mongoose");
 
 const SearchedContacts = async (req, res, next) => {
   try {
@@ -89,4 +89,21 @@ const getContactsForDmList = async (req, res) => {
   } catch (error) {}
 };
 
-module.exports = { SearchedContacts, getContactsForDmList };
+const getAllContacts = async (req, res) => {
+  try {
+    const users = await User.find({ _id: { $ne: req.userId } }, "firstName lastName _id email");
+    const contacts = users.map((user) => ({
+      label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,  
+      value: user._id,
+    }));
+
+    res.status(200).json({
+      success: true,
+      contacts,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" }); 
+  }
+};
+
+module.exports = { SearchedContacts, getContactsForDmList, getAllContacts };
