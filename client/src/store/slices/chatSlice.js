@@ -10,7 +10,7 @@ export const createChatSlice = (set, get) => ({
   fileDownloadingProgess : 0,
   channels:[],
   setChannels : (channels) => set({channels}),
-  addChannel : (channel) => {const channels = get().channels; set({channels:[...channels, channel]})},
+  addChannel : (channel) => {const channels = get().channels; set({channels:[channel, ...channels ]})},
   setIsUploading : (isUploading) => set({isUploading}),
   setIsDownloding : (isDownloding) => set({isDownloding}),
   setFileUploadingProgess : (fileUploadingProgess) => set({fileUploadingProgess}),

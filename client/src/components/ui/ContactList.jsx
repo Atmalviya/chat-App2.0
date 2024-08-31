@@ -45,7 +45,11 @@ const ContactList = ({ contacts, isChannel = false }) => {
                   />
                 ) : (
                   <div
-                    className={`uppercase h-10 w-10 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(
+                    className={`${
+                      selectedChatData && selectedChatData._id === contact._id
+                        ? "bg-[#ffffff22] border border-white/70" : getColor(contact.color)
+                      }
+                      uppercase h-10 w-10 text-lg border-[1px] flex items-center justify-center rounded-full ${getColor(
                       contact.color
                     )}`}
                   >

@@ -35,7 +35,8 @@ const MessageBar = () => {
   };
 
   const handleSendMessage = async () => {
-    if (selectedChatType === "contact") {
+    if(message.length>0){
+      if (selectedChatType === "contact") {
       Socket.emit("sendMessage", {
         sender: userInfo._id,
         recipient: selectedChatData._id,
@@ -53,7 +54,7 @@ const MessageBar = () => {
         channelId: selectedChatData._id
       })
     }
-    setMessage("");
+    setMessage("");}
   };
 
   const handleAddAttchement = () => {
@@ -61,7 +62,7 @@ const MessageBar = () => {
       fileInputRef.current.click();
     }
   };
-  const handleChangeAddAttchement = async (e) => {
+  const handleChangeAddAttchement = async (e) => {    
     try {
       const file = e.target.files[0];
       if (file) {
@@ -138,7 +139,7 @@ const MessageBar = () => {
       </div>
       <button
         onClick={handleSendMessage}
-        className="bg-[#8417ff] rounded-md flex items-center justify-center p-5 hover:bg-[#741bda] focus:bg-[#741bda] focus:border-none focus:outline-none focus:text-white duration-300 transition-all"
+        className={`bg-[#8417ff] rounded-md flex items-center justify-center p-5 hover:bg-[#741bda] focus:bg-[#741bda] focus:border-none focus:outline-none focus:text-white duration-300 transition-all`}
       >
         <IoSend className="text-2xl" />
       </button>
