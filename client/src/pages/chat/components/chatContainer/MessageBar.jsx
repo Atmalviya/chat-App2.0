@@ -119,6 +119,7 @@ const MessageBar = () => {
           className="hidden"
           ref={fileInputRef}
           onChange={handleChangeAddAttchement}
+          accept=".png, .jpg, .jpeg, .svg, .webp"
         />
         <div className="relative">
           <button

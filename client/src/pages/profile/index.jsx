@@ -27,7 +27,7 @@ const Profile = () => {
       setSelectedColor(userInfo.color);
     }
     if(userInfo.image) { 
-      setImage(`${HOST}/${userInfo.image}`);
+      setImage(userInfo.image);
     }
   }, []);
 
@@ -80,7 +80,7 @@ const Profile = () => {
       const res = await updateProfileImage(formData);
       if (res.status === 200 && res.data.image) {
         setUserInfo({ ...userInfo, image: res.data.image });
-        setImage(`${HOST}/${res.data.image}`);
+        setImage(res.data.image);
         toast.success("Profile image updated successfully");
       }
 

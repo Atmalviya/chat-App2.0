@@ -77,7 +77,7 @@ const MessageContainer = () => {
   const downloadFile = async (fileUrl) => {
     setIsDownloding(true);
     setFileDownloadingProgess(0);
-    const res = await apiClient.get(`${HOST}/${fileUrl}`, {
+    const res = await apiClient.get(fileUrl, {
       responseType: "blob",
       onDownloadProgress: (progressEvent) => {
         const { loaded, total } = progressEvent;
@@ -151,7 +151,7 @@ const MessageContainer = () => {
                 }}
               >
                 <img
-                  src={`${HOST}/${message.fileUrl}`}
+                  src={message.fileUrl}
                   alt=""
                   height={300}
                   width={300}
@@ -217,7 +217,7 @@ const MessageContainer = () => {
                 }}
               >
                 <img
-                  src={`${HOST}/${message.fileUrl}`}
+                  src={message.fileUrl}
                   alt=""
                   height={300}
                   width={300}
@@ -246,7 +246,7 @@ const MessageContainer = () => {
             <Avatar className="h-8 w-8 rounded-full overflow-hidden">
               {message.sender.image && (
                 <AvatarImage
-                  src={`${HOST}/${message.sender.image}`}
+                  src={message.sender.image}
                   alt="profile"
                   className="object-cover w-full h-full bg-black"
                 />
@@ -278,7 +278,7 @@ const MessageContainer = () => {
         <div className="fixed z-[1000] top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg flex-col">
           <div>
             <img
-              src={`${HOST}/${imgUrl}`}
+              src={imgUrl}
               alt=""
               className="h-[80vh] w-full bg-cover"
             />
