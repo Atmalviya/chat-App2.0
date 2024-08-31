@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { renameSync, unlinkSync } = require("fs");
 const path = require("path");
-
+const {uploadFileToCloud, deleteFileFromCloud } = require("../db/cloudinaryController");
 const createToken = (email, userId) => {
   return jwt.sign({ email, userId }, process.env.JWT_SECRET, {
     expiresIn: "1d",
@@ -140,22 +140,23 @@ const updateProfileImage = async (req, res, next) => {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
-    const date = new Date();
-    const timestamp = date.getTime();
-    const fileExtension = path.extname(req.file.originalname);
-    const newFileName = `uploads/profiles/${timestamp}${fileExtension}`;
-    renameSync(req.file.path, newFileName);
+    const response = await uploadFileToCloud(req.file.path);
+    if (!response) {
+      return res
+        .status(400)
+        .json({ success: false, message: "File not uploaded" });
+    }
     const updatedUser = await User.findByIdAndUpdate(
       req.userId,
       {
-        image: newFileName,
+        image: response.secure_url,
       },
       { new: true, runValidators: true }
     );
-
     return res.status(200).json({
+      success: true,
+      message: "File uploaded successfully",
       image: updatedUser.image,
-      message: "Profile image updated successfully",
     });
   } catch (error) {
     console.log(error);
@@ -166,23 +167,48 @@ const updateProfileImage = async (req, res, next) => {
 const removeProfileImage = async (req, res, next) => {
   const userId = req.userId;
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    if (user.image) {
-      unlinkSync(user.image);
-    }
-    user.image = null;
-    await user.save();
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: "User not found" });
+      }
 
-    return res.status(200).json({
-      message: "Profile image removed successfully",
-    });
+      if (user.image) {
+          const publicId = user.image.split('/').pop().split('.')[0];
+          await deleteFileFromCloud(publicId);
+          user.image = null;
+          await user.save();
+      }
+
+      return res.status(200).json({
+          message: "Profile image removed successfully",
+      });
   } catch (error) {
-    return res.status(500).json({ error, message: "Internal server error" });
+      console.error("Error removing profile image:", error);
+      return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+// const removeProfileImage = async (req, res, next) => {
+//   const userId = req.userId;
+//   try {
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     if (user.image) {
+//       unlinkSync(user.image);
+//     }
+//     user.image = null;
+//     await user.save();
+
+//     return res.status(200).json({
+//       message: "Profile image removed successfully",
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ error, message: "Internal server error" });
+//   }
+// };
 
 const Logout = async (req, res, next) => {
   try {

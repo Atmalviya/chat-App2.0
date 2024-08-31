@@ -1,6 +1,6 @@
 const Messages = require("../models/MessagesModel");
 const  { mkdirSync, renameSync } = require("fs");
-
+const uploadFileToCloud = require("../db/cloudinaryController");
 const getMessages = async (req, res) => {
   try {
     const user1 = req.userId;
@@ -37,15 +37,14 @@ const uploadFile = async (req, res) => {
     if(!req.file){
       return res.status(400).json({success: false, message: "file is required"})
     }
-    const date = Date.now();
-    let fileDir = `uploads/files/${date}/`; 
-    let fileName = `${fileDir}${req.file.originalname}`; 
-    mkdirSync(fileDir, { recursive: true });
-    renameSync(req.file.path, fileName);
+    const response = await uploadFileToCloud(req.file.path);
+    if(!response){
+      return res.status(400).json({success: false, message: "File not uploaded"})
+    }
     return res.status(200).json({
       success: true,
       message: "File uploaded successfully",
-      filePath : fileName,
+      filePath : response.secure_url,
     });
   } catch (error) {
     res.status(500).json({

@@ -11,7 +11,9 @@ const {
 const { verifyToken } = require("../middlewares/AuthMiddleware");
 const multer = require("multer");
 
-const upload = multer({ dest: "uploads/profiles/" });
+const upload = multer({ 
+  storage: multer.diskStorage({}),
+});
 
 authRoutes.post("/signup", signUp);
 authRoutes.post("/login", login);
