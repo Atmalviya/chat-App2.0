@@ -1,6 +1,6 @@
 const Messages = require("../models/MessagesModel");
 const  { mkdirSync, renameSync } = require("fs");
-const uploadFileToCloud = require("../db/cloudinaryController");
+const {uploadFileToCloud} = require("../db/cloudinaryController");
 const getMessages = async (req, res) => {
   try {
     const user1 = req.userId;
